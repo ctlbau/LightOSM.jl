@@ -116,6 +116,18 @@ Container for storing OpenStreetMap node, way, relation and graph related obejct
     weight_type::Union{Symbol,Nothing} = nothing
 end
 
+struct SimplifiedOSMGraph{U <: Integer,T <: Integer,W <: Real}
+    parent::OSMGraph{U,T,W}
+    node_coordinates::Vector{Vector{W}} # needed for astar heuristic
+    node_to_index::OrderedDict{T,U}
+    index_to_node::OrderedDict{U,T}
+    edge_to_highway::Dict{Vector{T},Vector{T}}
+    graph::Union{AbstractGraph,Nothing}
+    edges::Dict{NTuple{3, U}, Vector{U}}
+    weights::Union{SparseMatrixCSC{W,U},Nothing}
+    dijkstra_states::Union{Vector{Vector{U}},Nothing}
+end
+
 """
 OpenStreetMap building polygon.
 
