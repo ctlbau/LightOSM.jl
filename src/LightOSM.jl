@@ -9,14 +9,17 @@ using StaticGraphs: StaticDiGraph
 using SimpleWeightedGraphs: SimpleWeightedDiGraph
 using MetaGraphs: MetaDiGraph
 using NearestNeighbors: KDTree, knn
-using ArchGDAL: IGeometry, createlinestring, createpoint
 using HTTP
 using JSON
 using LightXML
 using DataFrames
+using ArchGDAL: createmultilinestring, createlinestring, createpoint, addgeom!
+using RecipesBase
 
 export GeoLocation,
+       AbstractOSMGraph,
        OSMGraph,
+       SimplifiedOSMGraph,
        Node,
        Way,
        Restriction,
@@ -36,7 +39,10 @@ export GeoLocation,
        buildings_from_object,
        buildings_from_download,
        buildings_from_file,
-       simplify_graph
+       simplify_graph,
+       node_gdf,
+       edge_gdf,
+       highway_gdf
 
 include("types.jl")
 include("constants.jl")
@@ -50,5 +56,7 @@ include("shortest_path.jl")
 include("nearest_node.jl")
 include("buildings.jl")
 include("simplification.jl")
+include("geodataframes.jl")
+include("plotrecipes.jl")
 
 end # module
