@@ -13,7 +13,7 @@ using HTTP
 using JSON
 using LightXML
 using DataFrames
-using ArchGDAL: createmultilinestring, createlinestring, createpoint, addgeom!
+using GeoInterface
 using RecipesBase
 
 export GeoLocation,
