@@ -45,8 +45,20 @@ function path_to_endpoint(g::AbstractGraph, (ep, ep_succ)::Tuple{T,T}) where {T<
     return path
 end
 
+"""
+Return the total weight of a path given as a Vector of Ids.
+"""
 function total_weight(g::OSMGraph, path::Vector{<:Integer})
     sum((g.weights[path[[i, i+1]]...] for i in 1:length(path)-1))
+end
+
+function ways_in_path(g::OSMGraph, path::Vector{<:Integer})
+    ways = Set{Int}()
+    for i in 1:(length(path)-1)
+        edge = [g.index_to_node[path[i]], g.index_to_node[path[i+1]]]
+        push!(ways, g.edge_to_way[edge])
+    end
+    return collect(ways)
 end
 
 """
@@ -79,7 +91,6 @@ function simplify_graph(osmg::OSMGraph{U, T, W}) where {U, T, W}
         u = index_mapping[first(path)]
         v = index_mapping[last(path)]
         path_weight = total_weight(osmg, path)
-
         if add_edge!(graph, (u, v))
             key = 0
             weights[u, v] = path_weight
@@ -92,12 +103,17 @@ function simplify_graph(osmg::OSMGraph{U, T, W}) where {U, T, W}
         edges[u,v,key] = path
     end
 
+    edge_to_way = Dict{NTuple{3,U}, Vector{T}}()
+    for (edge, path) in edges
+        edge_to_way[edge] = ways_in_path(osmg, path)
+    end
+
     return SimplifiedOSMGraph(
                 osmg,
                 node_coordinates,
                 node_to_index,
                 index_to_node,
-                Dict{Vector{T}, Vector{T}}(),
+                edge_to_way,
                 graph,
                 edges,
                 weights,
